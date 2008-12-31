@@ -46,19 +46,21 @@
             this.altitudeGraph = new ZedGraph.ZedGraphControl();
             this.FlightTab = new System.Windows.Forms.TabPage();
             this.DiagTab = new System.Windows.Forms.TabPage();
+            this.tabPage1 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.connectProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusLabelConnected = new System.Windows.Forms.ToolStripStatusLabel();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.connectCheckTimer = new System.Windows.Forms.Timer(this.components);
+            this.buttonEraseEE = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.DataTab.SuspendLayout();
             this.DiagTab.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonConnect
@@ -231,6 +233,7 @@
             // 
             // DiagTab
             // 
+            this.DiagTab.Controls.Add(this.buttonEraseEE);
             this.DiagTab.Controls.Add(this.textStatus);
             this.DiagTab.Controls.Add(this.checkBoxBuzzer);
             this.DiagTab.Controls.Add(this.label1);
@@ -249,6 +252,36 @@
             this.DiagTab.TabIndex = 0;
             this.DiagTab.Text = "Diagnostics";
             this.DiagTab.UseVisualStyleBackColor = true;
+            // 
+            // tabPage1
+            // 
+            this.tabPage1.Controls.Add(this.button1);
+            this.tabPage1.Controls.Add(this.richTextBox1);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Name = "tabPage1";
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage1.Size = new System.Drawing.Size(676, 473);
+            this.tabPage1.TabIndex = 3;
+            this.tabPage1.Text = "tabPage1";
+            this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(564, 18);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.Size = new System.Drawing.Size(543, 467);
+            this.richTextBox1.TabIndex = 0;
+            this.richTextBox1.Text = "";
             // 
             // statusStrip1
             // 
@@ -287,36 +320,22 @@
             this.statusLabelConnected.Name = "statusLabelConnected";
             this.statusLabelConnected.Size = new System.Drawing.Size(79, 17);
             this.statusLabelConnected.Text = "Not Connected";
+            this.statusLabelConnected.Click += new System.EventHandler(this.statusLabelConnected_Click);
             // 
-            // tabPage1
+            // connectCheckTimer
             // 
-            this.tabPage1.Controls.Add(this.button1);
-            this.tabPage1.Controls.Add(this.richTextBox1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 25);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(676, 473);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "tabPage1";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.connectCheckTimer.Interval = 1000;
+            this.connectCheckTimer.Tick += new System.EventHandler(this.connectCheckTimer_Tick);
             // 
-            // richTextBox1
+            // buttonEraseEE
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(0, 0);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(543, 467);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(564, 18);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonEraseEE.Location = new System.Drawing.Point(389, 119);
+            this.buttonEraseEE.Name = "buttonEraseEE";
+            this.buttonEraseEE.Size = new System.Drawing.Size(105, 23);
+            this.buttonEraseEE.TabIndex = 11;
+            this.buttonEraseEE.Text = "Erase EEPROM";
+            this.buttonEraseEE.UseVisualStyleBackColor = true;
+            this.buttonEraseEE.Click += new System.EventHandler(this.buttonEraseEE_Click);
             // 
             // MainWindow
             // 
@@ -336,9 +355,9 @@
             this.DataTab.ResumeLayout(false);
             this.DiagTab.ResumeLayout(false);
             this.DiagTab.PerformLayout();
+            this.tabPage1.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -371,6 +390,8 @@
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Timer connectCheckTimer;
+        private System.Windows.Forms.Button buttonEraseEE;
     }
 }
 

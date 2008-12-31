@@ -24,7 +24,7 @@ namespace APD
             //connectProgressBar.Value = 0;
             //connectProgressBar.Visible = true;
 
-            Constants.AltBoardUSB status = AltUSB.DetectPICkit2Device(0);
+            Constants.AltBoardUSB status = AltUSB.DetectAltimeterDevice(0);
             //connectProgressBar.Value = 50;
             if (status == Constants.AltBoardUSB.found)
             {
@@ -121,15 +121,15 @@ namespace APD
 
             // symbols, and "Porsche" in the legend
 
-            LineItem myCurve = myPane.AddCurve("Porsche",
-                  list1, Color.Red, SymbolType.Diamond);
+            //LineItem myCurve = myPane.AddCurve("Porsche",
+            //      list1, Color.Red, SymbolType.Diamond);
 
             // Generate a blue curve with circle
 
             // symbols, and "Piper" in the legend
 
-            LineItem myCurve2 = myPane.AddCurve("Piper",
-                  list2, Color.Blue, SymbolType.Circle);
+            //LineItem myCurve2 = myPane.AddCurve("Piper",
+            //      list2, Color.Blue, SymbolType.Circle);
 
             // Tell ZedGraph to refigure the
 
@@ -149,8 +149,10 @@ namespace APD
 
         private void button1_Click(object sender, EventArgs e)
         {
+            GraphPane myPane = altitudeGraph.GraphPane;
             EEPROM x = new EEPROM();
             byte[] b = new byte[1024 * 2 + 10];
+            FlightDataSet y;
 
             b[0] = 1;
             
@@ -158,20 +160,63 @@ namespace APD
             b[2] = Convert.ToByte('P');
             b[3] = Convert.ToByte('D');
             
+            // 20Hz
             b[4] = 20;
             b[5] = 0;
 
-            b[6] = 0;
-            b[7] = 4;
+            // datapoints = 725 (0x000002D5)
+            b[6] = 0xD5;
+            b[7] = 0x02;
+            b[8] = 0;
+            b[9] = 0;
 
-            for (UInt16 i = 0; i < 1024; i++)
+            for (UInt16 i = 0; i < 725; i++)
             {
-                b[i * 2 + 8] = BitConverter.GetBytes(i)[0];
-                b[i * 2 + 8 + 1] = BitConverter.GetBytes(i)[1];
+                b[i * 2 + 10] = BitConverter.GetBytes(i+112)[0];
+                b[i * 2 + 10 + 1] = BitConverter.GetBytes(i+112)[1];
             }
 
             x.parseEEPROM(b);
             richTextBox1.Text = x.testContents();
+
+            y = x.flights[0];
+
+            Double[] times = new Double[0];
+            Double[] altitudes = new Double[0];
+
+            y.getTimeAltitudes(ref times, ref altitudes);
+
+            myPane.AddCurve("Porsche", new PointPairList(times, altitudes), Color.Red, SymbolType.Diamond);
+        }
+
+        private void statusLabelConnected_Click(object sender, EventArgs e)
+        {
+            if (connectCheckTimer.Enabled)
+            {
+                AltUSB.DisconnectAltimeter();
+                connectCheckTimer.Enabled = false;
+                statusLabelConnected.Text = "Disconnected";
+            }
+            else
+            {
+                connectCheckTimer.Enabled = true;
+                statusLabelConnected.Text = "Searching for altimeter...";
+            }
+        }
+
+        private void connectCheckTimer_Tick(object sender, EventArgs e)
+        {
+            Constants.AltBoardUSB status = AltUSB.DetectAltimeterDevice(0);
+            if (status == Constants.AltBoardUSB.found)
+            {
+                statusLabelConnected.Text = "Altimeter Connected";
+            }
+            connectCheckTimer.Enabled = false;
+        }
+
+        private void buttonEraseEE_Click(object sender, EventArgs e)
+        {
+
         }
 
     }

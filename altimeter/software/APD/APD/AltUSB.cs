@@ -14,13 +14,13 @@ namespace APD
         public static byte[] Usb_read_array = new byte[Constants.PACKET_SIZE];
         public static String FirmwareVersion = "NA";
 
-        public static Constants.AltBoardUSB DetectPICkit2Device(ushort pk2ID)
+        public static Constants.AltBoardUSB DetectAltimeterDevice(ushort altID)
         {
             IntPtr usbRdTemp = IntPtr.Zero;
             IntPtr usbWrTemp = IntPtr.Zero;
 
             bool result = USB.Find_This_Device(Constants.MChipVendorID, Constants.Pk2DeviceID,
-                                 pk2ID, ref usbRdTemp, ref usbWrTemp);
+                                 altID, ref usbRdTemp, ref usbWrTemp);
 
             usbReadHandle = usbRdTemp;
             usbWriteHandle = usbWrTemp;
@@ -81,11 +81,12 @@ namespace APD
             return readResult;
         }
 
-        public static void DisconnectPICkit2Unit()
+        public static void DisconnectAltimeter()
         {
             usbReadHandle = IntPtr.Zero;
             usbWriteHandle = IntPtr.Zero;
         }
+
         public static byte ReadEEByte(ushort address, byte block)
         {
             byte[] commandArray = new byte[4];

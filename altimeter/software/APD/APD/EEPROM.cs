@@ -7,7 +7,11 @@ namespace APD
 {
     class EEPROM
     {
-        private FlightDataSet[] flights;
+        public FlightDataSet[] flights
+        {
+            get;
+            set;
+        }
         private UInt16 frequency;
         private UInt16 deployAltitude1;
         private UInt16 deployAltitude2;
@@ -36,8 +40,8 @@ namespace APD
             UInt32 dataPointCount;
             //byte[] dataPoints;
             
-            if(eeprom.Length < 2)
-                return;     //handle better?
+            if(eeprom.Length < 1)
+                throw new Exception("EEPROM data invalid");
 
             if (!BitConverter.IsLittleEndian)
                 throw new Exception("Processor not little endian architecture");
@@ -51,20 +55,21 @@ namespace APD
             {
                 uint[] dataPoints;
                 flights[i] = new FlightDataSet();
+                
                 //check for start bytes
                 if (eeprom[pointer] != 'A' || eeprom[pointer + 1] != 'P' || eeprom[pointer + 2] != 'D')
-                    return; //handle bad data better
+                    throw new Exception("Error while parsing header for dataset " + (i+1));
                 pointer += 3;
 
                 //read frequency in Hz
                 frequency = BitConverter.ToUInt16(eeprom, pointer);
                 pointer += 2;
-
+                
                 //read number of datapoints
                 dataPointCount = BitConverter.ToUInt32(eeprom, pointer);
                 pointer += 4;
+                
                 dataPoints = new uint[dataPointCount];
-
                 for (int j = 0; j < dataPointCount; j++)
                 {
                     dataPoints[j] = BitConverter.ToUInt16(eeprom, pointer);
